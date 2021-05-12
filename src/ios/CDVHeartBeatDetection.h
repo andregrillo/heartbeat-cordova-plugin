@@ -1,8 +1,9 @@
 @protocol CDVHeartBeatDetectionDelegate
 
 - (void)heartRateStart;
-- (void)heartRateUpdate:(int)bpm atTime:(int)seconds;
+- (void)heartRateUpdate:(int)bpm atTime:(int)seconds bfi:(NSMutableArray*)bfi sbi:(NSMutableArray*)sdi hue:(NSMutableArray*)hue;
 - (void)heartRateEnd;
+- (void)heartRateError;
 
 @end
 
@@ -11,8 +12,11 @@
 @property (nonatomic, weak) id<CDVHeartBeatDetectionDelegate> delegate;
 @property (nonatomic, assign) int seconds;
 @property (nonatomic, assign) int fps;
+@property (nonatomic, assign) NSMutableArray *returnArray;
+@property (nonatomic, assign) BOOL heartBeatError;
+//@property (nonatomic, assign) int redThreshold;
 
 - (void)startDetection;
-- (void)stopDetection;
+- (void)stopDetection:(bool)error;
 
 @end
