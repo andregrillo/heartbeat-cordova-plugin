@@ -106,4 +106,18 @@
     self.error = true;
 }
 
+- (void)getModel:(CDVInvokedUrlCommand*)command {
+    NSString* callbackId = [command callbackId];
+    size_t size;
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    char *model = malloc(size);
+    sysctlbyname("hw.machine", model, &size, NULL, 0);
+    NSString *deviceModel = [NSString stringWithCString:model encoding:NSUTF8StringEncoding];
+    free(model);
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:(CDVCommandStatus_OK)
+                               messageAsString:deviceModel];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
 @end

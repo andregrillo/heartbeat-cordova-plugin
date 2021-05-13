@@ -9,9 +9,11 @@ heartbeat.take = function (options, successCallback, errorCallback) {
 	exec(successCallback, errorCallback, "HeartBeat", "take", args);
 };
 
+heartbeat.getModel = function (success, error) {
+    exec(success, error, 'HeartBeat', 'getModel');
+};
 
 module.exports = heartbeat;
-
 
 (function(){
 try{

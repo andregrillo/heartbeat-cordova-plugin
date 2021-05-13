@@ -1,0 +1,30 @@
+{
+  "name": "com.vgc.cordova.plugins.heartbeat",
+  "version": "0.2.2",
+  "description": "Cordova Heart Beat Monitor",
+  "cordova": {
+    "id": "com.vgc.cordova.plugins.heartbeat",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "keywords": [
+    "cordova",
+    "heart",
+    "beat",
+    "rate",
+    "bpm",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=7.0.0"
+    }
+  ],
+  "author": "",
+  "license": "ISC"
+}
