@@ -9,6 +9,10 @@
       "ios"
     ]
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andregrillo/heartbeat-cordova-plugin.git"
+  },
   "keywords": [
     "cordova",
     "heart",
@@ -22,9 +26,13 @@
   "engines": [
     {
       "name": "cordova",
-      "version": ">=7.0.0"
+      "version": ">=3.4.0"
     }
   ],
-  "author": "",
-  "license": "ISC"
+  "author": "André Grillo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andregrillo/heartbeat-cordova-plugin/issues"
+  },
+  "homepage": "https://github.com/andregrillo/heartbeat-cordova-plugin#readme"
 }
