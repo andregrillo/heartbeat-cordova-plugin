@@ -1,5 +1,6 @@
 #import "CDVHeartBeat.h"
 #import "CDVHeartBeatDetection.h"
+#import <sys/sysctl.h>
 
 @interface CDVHeartBeat()<CDVHeartBeatDetectionDelegate>
 
