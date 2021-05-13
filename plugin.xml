@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-        id="com.litekey.cordova.plugins.heartbeat"
+        id="com.vgc.cordova.plugins.heartbeat"
         version="0.2.2">
 
   <name>HeartBeat</name>
