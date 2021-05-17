@@ -1,6 +1,6 @@
 {
-  "name": "com.vgc.cordova.plugins.heartbeat",
-  "version": "0.2.2",
+  "name": "HeartBeat",
+  "version": "0.2.3",
   "description": "Cordova Heart Beat Monitor",
   "cordova": {
     "id": "com.vgc.cordova.plugins.heartbeat",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andregrillo/heartbeat-cordova-plugin.git"
+    "url": "https://github.com/andregrillo/heartbeat-cordova-plugin.git"
   },
   "keywords": [
     "cordova",
@@ -23,12 +23,20 @@
     "cordova-android",
     "cordova-ios"
   ],
-  "engines": [
-    {
-      "name": "cordova",
-      "version": ">=3.4.0"
+  "engines": {
+    "cordovaDependencies": {
+      "3.0.0": {
+        "cordova-android": ">=6.3.0"
+      },
+      "4.1.0": {
+        "cordova-android": ">=6.3.0",
+        "cordova": ">=7.1.0"
+      },
+      "5.0.0": {
+        "cordova": ">100"
+      }
     }
-  ],
+  },
   "author": "André Grillo",
   "license": "ISC",
   "bugs": {
