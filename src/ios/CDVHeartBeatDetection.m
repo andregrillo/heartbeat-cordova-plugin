@@ -117,6 +117,19 @@ int failedFrames;
     }
 }
 
+- (BOOL) hasCameraPermission {
+    // Validate the app has permission to access the camera
+    __block BOOL hasPermission = false;
+    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+        if(!granted) {
+            hasPermission = false;
+        } else {
+            hasPermission = true;
+        }
+    }];
+    return hasPermission;
+}
+
 - (void)stopDetection:(bool)error
 {
     [self.session stopRunning];

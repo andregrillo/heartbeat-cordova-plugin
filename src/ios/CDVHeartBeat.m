@@ -29,6 +29,24 @@
         //heartBeatDetection.redThreshold = [[arguments objectAtIndex:2] intValue];
         self.detecting = true;
         self.error = false;
+        
+        
+        if (!heartBeatDetection.hasCameraPermission) {
+            // Denied; show an alert
+            __weak CDVHeartBeat* weakSelf = self;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] message:NSLocalizedString(@"Access to the camera has been prohibited; please enable it in the Settings app to continue.", nil) preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    [weakSelf sendNoPermissionResult:command.callbackId];
+                }]];
+                [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Settings", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                    [weakSelf sendNoPermissionResult:command.callbackId];
+                }]];
+                [weakSelf.viewController presentViewController:alertController animated:YES completion:nil];
+            });
+        }
+        
         [heartBeatDetection startDetection];
         
         while(self.detecting){
@@ -85,6 +103,13 @@
             [self.commandDelegate sendPluginResult:resulterror callbackId:callbackId];
         }
     }];
+}
+
+- (void)sendNoPermissionResult:(NSString*)callbackId
+{
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"has no access to camera"];
+
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)heartRateStart{

@@ -18,5 +18,6 @@
 
 - (void)startDetection;
 - (void)stopDetection:(bool)error;
+- (BOOL)hasCameraPermission;
 
 @end
