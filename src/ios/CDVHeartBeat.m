@@ -45,63 +45,59 @@
                 }]];
                 [weakSelf.viewController presentViewController:alertController animated:YES completion:nil];
             });
-        }
-        
-        [heartBeatDetection startDetection];
-        
-        while(self.detecting){
-            
-        }
-        
-        [self.bpms sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"self" ascending:YES]]];
-        if(self.error == false) {
-            int bpm = [((NSNumber*)self.bpms[self.bpms.count/2]) intValue];
-            NSMutableDictionary *jsonObj = [[NSMutableDictionary alloc]initWithCapacity:4];
-            [jsonObj setObject:[NSNumber numberWithInt:bpm] forKey:@"bpm"];
-            [jsonObj setObject:[NSMutableArray arrayWithArray:self.bfi] forKey:@"bfi"];
-            [jsonObj setObject:[NSMutableArray arrayWithArray:self.sbi] forKey:@"sbi"];
-            [jsonObj setObject:[NSMutableArray arrayWithArray:self.hue] forKey:@"hue"];
-            [heartBeatDetection.returnArray addObject:jsonObj];
-        }
-        
-        NSError *error;
-        if(heartBeatDetection.heartBeatError == false) {
-            if (!heartBeatDetection.returnArray || !heartBeatDetection.returnArray.count || heartBeatDetection.returnArray.count == 0) {
-                CDVPluginResult* resulterror = [CDVPluginResult
-                                                resultWithStatus:CDVCommandStatus_ERROR
-                                                messageAsString:@"Error detecting your heart beat"];
-                
-                [self.commandDelegate sendPluginResult:resulterror callbackId:callbackId];
-            }
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:heartBeatDetection.returnArray
-                                                               options:NSJSONWritingPrettyPrinted
-                                                                 error:&error];
-            NSString *jsonString = @"";
-            if (! jsonData) {
-                NSLog(@"Got an error converting to json: %@", error);
-            } else {
-                jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            }
-            
-            if ([jsonString isEqual:@""] || [jsonString isEqual:nil]) {
-                CDVPluginResult* resulterror = [CDVPluginResult
-                                                resultWithStatus:CDVCommandStatus_ERROR
-                                                messageAsString:@"Error converting NSDictionary to json format"];
-                [self.commandDelegate sendPluginResult:resulterror callbackId:callbackId];
-            } else {
-                CDVPluginResult* result = [CDVPluginResult
-                                           resultWithStatus:(CDVCommandStatus_OK)
-                                           messageAsString:jsonString];
-                
-                [self.commandDelegate sendPluginResult:result callbackId:callbackId];
-            }
-            
         } else {
-            CDVPluginResult* resulterror = [CDVPluginResult
-                                            resultWithStatus:CDVCommandStatus_ERROR
-                                            messageAsString:@"Error detecting heartbeat"];
-            [self.commandDelegate sendPluginResult:resulterror callbackId:callbackId];
+            [heartBeatDetection startDetection];
+            
+            while(self.detecting){
+                
+            }
+            
+            NSError *error;
+            if(heartBeatDetection.heartBeatError == false && heartBeatDetection.returnArray.count > 0 && heartBeatDetection.returnArray) {
+                
+                [self.bpms sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"self" ascending:YES]]];
+                if(self.error == false) {
+                    int bpm = [((NSNumber*)self.bpms[self.bpms.count/2]) intValue];
+                    NSMutableDictionary *jsonObj = [[NSMutableDictionary alloc]initWithCapacity:4];
+                    [jsonObj setObject:[NSNumber numberWithInt:bpm] forKey:@"bpm"];
+                    [jsonObj setObject:[NSMutableArray arrayWithArray:self.bfi] forKey:@"bfi"];
+                    [jsonObj setObject:[NSMutableArray arrayWithArray:self.sbi] forKey:@"sbi"];
+                    [jsonObj setObject:[NSMutableArray arrayWithArray:self.hue] forKey:@"hue"];
+                    [heartBeatDetection.returnArray addObject:jsonObj];
+                }
+                
+                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:heartBeatDetection.returnArray
+                                                                   options:NSJSONWritingPrettyPrinted
+                                                                     error:&error];
+                NSString *jsonString = @"";
+                if (! jsonData) {
+                    NSLog(@"Got an error converting to json: %@", error);
+                } else {
+                    jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                }
+                
+                if ([jsonString isEqual:@""] || [jsonString isEqual:nil]) {
+                    CDVPluginResult* resulterror = [CDVPluginResult
+                                                    resultWithStatus:CDVCommandStatus_ERROR
+                                                    messageAsString:@"Error converting NSDictionary to json format"];
+                    [self.commandDelegate sendPluginResult:resulterror callbackId:callbackId];
+                } else {
+                    CDVPluginResult* result = [CDVPluginResult
+                                               resultWithStatus:(CDVCommandStatus_OK)
+                                               messageAsString:jsonString];
+                    
+                    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+                }
+                
+            } else {
+                CDVPluginResult* resulterror = [CDVPluginResult
+                                                resultWithStatus:CDVCommandStatus_ERROR
+                                                messageAsString:@"Error detecting heartbeat"];
+                [self.commandDelegate sendPluginResult:resulterror callbackId:callbackId];
+            }
         }
+        
+        
     }];
 }
 
