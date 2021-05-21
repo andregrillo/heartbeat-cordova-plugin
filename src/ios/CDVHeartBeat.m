@@ -1,6 +1,7 @@
 #import "CDVHeartBeat.h"
 #import "CDVHeartBeatDetection.h"
 #import <sys/sysctl.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface CDVHeartBeat()<CDVHeartBeatDetectionDelegate>
 
@@ -31,7 +32,8 @@
         self.error = false;
         
         
-        if (!heartBeatDetection.hasCameraPermission) {
+//        if (!heartBeatDetection.hasCameraPermission) {
+        if (![self checkCameraAuthorization]) {
             // Denied; show an alert
             __weak CDVHeartBeat* weakSelf = self;
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -99,6 +101,33 @@
         
         
     }];
+}
+
+-(BOOL) checkCameraAuthorization {
+    
+//    NSString *mediaType = ;
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if(authStatus == AVAuthorizationStatusAuthorized) {
+        return true;
+    } else if(authStatus == AVAuthorizationStatusDenied){
+        return false;
+    } else if(authStatus == AVAuthorizationStatusRestricted){
+        return false;
+    } else if(authStatus == AVAuthorizationStatusNotDetermined){
+      // not determined?!
+        __block BOOL access;
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            if(granted){
+                access = true;
+            } else {
+                access = false;
+            }
+        }];
+        return access;
+    } else {
+      // impossible, unknown authorization status
+        return false;
+    }
 }
 
 - (void)sendNoPermissionResult:(NSString*)callbackId

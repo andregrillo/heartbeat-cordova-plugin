@@ -4,7 +4,7 @@
 @interface CDVHeartBeatDetection() <AVCaptureVideoDataOutputSampleBufferDelegate>
 
 @property (nonatomic, strong) AVCaptureSession *session;
-@property (nonatomic, strong) NSMutableArray *dataPointsHue;
+//@property (nonatomic, strong) NSMutableArray *dataPointsHue;
 //@property (nonatomic, strong) NSMutableArray *returnArray;
 @end
 
@@ -17,7 +17,7 @@ int failedFrames;
 /* start the measurement and calculation */
 - (void)startDetection
 {
-    self.returnArray = [NSMutableArray array];
+    self.returnArray = [[NSMutableArray alloc] init];
     self.dataPointsHue = [[NSMutableArray alloc] init];
     self.session = [[AVCaptureSession alloc] init];
     self.session.sessionPreset = AVCaptureSessionPresetLow;
@@ -281,11 +281,13 @@ static int count=0;
         [self stopDetection:false];
     }
     
-    if (!isnan(hue) && count > 10){
-          [self.dataPointsHue addObject:@(hue)];
-    }
+//    if (!isnan(hue) && count > 10){
+//          [self.dataPointsHue addObject:@(hue)];
+//    }
     
-    if (self.dataPointsHue.count == self.fps * self.seconds)
+    [self.dataPointsHue addObject:@(hue)];
+    
+    if (self.dataPointsHue.count == (self.fps * self.seconds) - 4)
     {
         if (self.delegate)
         {
