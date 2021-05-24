@@ -58,6 +58,7 @@
             if(heartBeatDetection.heartBeatError == false && heartBeatDetection.returnArray.count > 0 && heartBeatDetection.returnArray) {
                 
                 [self.bpms sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"self" ascending:YES]]];
+                NSMutableArray *finalResult = [[NSMutableArray alloc] init ];
                 if(self.error == false) {
                     int bpm = [((NSNumber*)self.bpms[self.bpms.count/2]) intValue];
                     NSMutableDictionary *jsonObj = [[NSMutableDictionary alloc]initWithCapacity:4];
@@ -65,10 +66,13 @@
                     [jsonObj setObject:[NSMutableArray arrayWithArray:self.bfi] forKey:@"bfi"];
                     [jsonObj setObject:[NSMutableArray arrayWithArray:self.sbi] forKey:@"sbi"];
                     [jsonObj setObject:[NSMutableArray arrayWithArray:self.hue] forKey:@"hue"];
-                    [heartBeatDetection.returnArray addObject:jsonObj];
+
+                    [finalResult addObject:jsonObj];
+                    [finalResult addObject:heartBeatDetection.returnArray];
+                    
                 }
                 
-                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:heartBeatDetection.returnArray
+                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:finalResult
                                                                    options:NSJSONWritingPrettyPrinted
                                                                      error:&error];
                 NSString *jsonString = @"";
