@@ -37,13 +37,13 @@
             // Denied; show an alert
             __weak CDVHeartBeat* weakSelf = self;
             dispatch_async(dispatch_get_main_queue(), ^{
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] message:NSLocalizedString(@"Access to the camera has been prohibited; please enable it in the Settings app to continue.", nil) preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] message:NSLocalizedString(@"Access to the camera has been denied. Please enable it in the Settings app to continue.", nil) preferredStyle:UIAlertControllerStyleAlert];
                 [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                     [weakSelf sendNoPermissionResult:command.callbackId];
                 }]];
                 [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Settings", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-                    [weakSelf sendNoPermissionResult:command.callbackId];
+                    //[weakSelf sendNoPermissionResult:command.callbackId];
                 }]];
                 [weakSelf.viewController presentViewController:alertController animated:YES completion:nil];
             });
@@ -63,9 +63,9 @@
                     int bpm = [((NSNumber*)self.bpms[self.bpms.count/2]) intValue];
                     NSMutableDictionary *jsonObj = [[NSMutableDictionary alloc]initWithCapacity:4];
                     [jsonObj setObject:[NSNumber numberWithInt:bpm] forKey:@"bpm"];
-                    [jsonObj setObject:[NSMutableArray arrayWithArray:self.bfi] forKey:@"bfi"];
-                    [jsonObj setObject:[NSMutableArray arrayWithArray:self.sbi] forKey:@"sbi"];
-                    [jsonObj setObject:[NSMutableArray arrayWithArray:self.hue] forKey:@"hue"];
+//                    [jsonObj setObject:[NSMutableArray arrayWithArray:self.bfi] forKey:@"bfi"];
+//                    [jsonObj setObject:[NSMutableArray arrayWithArray:self.sbi] forKey:@"sbi"];
+//                    [jsonObj setObject:[NSMutableArray arrayWithArray:self.hue] forKey:@"hue"];
 
                     [finalResult addObject:jsonObj];
                     [finalResult addObject:heartBeatDetection.returnArray];
@@ -113,21 +113,21 @@
     AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
     if(authStatus == AVAuthorizationStatusAuthorized) {
         return true;
-    } else if(authStatus == AVAuthorizationStatusDenied){
-        return false;
-    } else if(authStatus == AVAuthorizationStatusRestricted){
-        return false;
-    } else if(authStatus == AVAuthorizationStatusNotDetermined){
-      // not determined?!
-        __block BOOL access;
-        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
-            if(granted){
-                access = true;
-            } else {
-                access = false;
-            }
-        }];
-        return access;
+//    } else if(authStatus == AVAuthorizationStatusDenied){
+//        return false;
+//    } else if(authStatus == AVAuthorizationStatusRestricted){
+//        return false;
+//    } else if(authStatus == AVAuthorizationStatusNotDetermined){
+//      // not determined?!
+//        __block BOOL access;
+//        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+//            if(granted){
+//                access = true;
+//            } else {
+//                access = false;
+//            }
+//        }];
+//        return access;
     } else {
       // impossible, unknown authorization status
         return false;
