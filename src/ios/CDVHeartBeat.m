@@ -117,17 +117,17 @@
 //        return false;
 //    } else if(authStatus == AVAuthorizationStatusRestricted){
 //        return false;
-//    } else if(authStatus == AVAuthorizationStatusNotDetermined){
-//      // not determined?!
-//        __block BOOL access;
-//        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
-//            if(granted){
-//                access = true;
-//            } else {
-//                access = false;
-//            }
-//        }];
-//        return access;
+    } else if(authStatus == AVAuthorizationStatusNotDetermined){
+      // not determined?!
+        __block BOOL access;
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            if(granted){
+                access = true;
+            } else {
+                access = false;
+            }
+        }];
+        return access;
     } else {
       // impossible, unknown authorization status
         return false;
