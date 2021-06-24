@@ -161,6 +161,74 @@
     self.error = true;
 }
 
+-(void) checkCameraAuthorization:(CDVInvokedUrlCommand*)command {
+    NSString* callbackId = [command callbackId];
+//    NSArray* arguments = command.arguments;
+//    NSString *mediaType = ;
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if(authStatus == AVAuthorizationStatusAuthorized) {
+        CDVPluginResult* result = [CDVPluginResult
+                                   resultWithStatus:(CDVCommandStatus_OK)
+                                   messageAsString:@"Granted"];
+        
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+        
+//        return true;
+//    } else if(authStatus == AVAuthorizationStatusDenied){
+//        return false;
+//    } else if(authStatus == AVAuthorizationStatusRestricted){
+//        return false;
+    } else if(authStatus == AVAuthorizationStatusNotDetermined){
+      // not determined?!
+        
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            if(granted){
+                CDVPluginResult* result = [CDVPluginResult
+                                           resultWithStatus:(CDVCommandStatus_OK)
+                                           messageAsString:@"Granted"];
+                
+                [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+            } else {
+                //access = false;
+                // Denied; show an alert
+                __weak CDVHeartBeat* weakSelf = self;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] message:NSLocalizedString(@"Access to the camera has been denied. Please enable it in the Settings app to continue.", nil) preferredStyle:UIAlertControllerStyleAlert];
+                    [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                        //[weakSelf sendNoPermissionResult:command.callbackId];
+                    }]];
+                    [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Settings", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                        //[weakSelf sendNoPermissionResult:command.callbackId];
+                    }]];
+                    [weakSelf.viewController presentViewController:alertController animated:YES completion:nil];
+                });
+                CDVPluginResult* resulterror = [CDVPluginResult
+                                                resultWithStatus:CDVCommandStatus_ERROR
+                                                messageAsString:@"Denied"];
+                [self.commandDelegate sendPluginResult:resulterror callbackId:callbackId];
+            }
+        }];
+//        return access;
+    } else {
+      // impossible, unknown authorization status
+        __weak CDVHeartBeat* weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] message:NSLocalizedString(@"Our App needs to access the Camera. Please allow it in the Settings app to continue.", nil) preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            }]];
+            [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Settings", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            }]];
+            [weakSelf.viewController presentViewController:alertController animated:YES completion:nil];
+            CDVPluginResult* resulterror = [CDVPluginResult
+                                            resultWithStatus:CDVCommandStatus_ERROR
+                                            messageAsString:@"Unknown"];
+            [self.commandDelegate sendPluginResult:resulterror callbackId:callbackId];
+        });
+    }
+}
+
 - (void)getModel:(CDVInvokedUrlCommand*)command {
     NSString* callbackId = [command callbackId];
     size_t size;

@@ -9,6 +9,10 @@ heartbeat.take = function (options, successCallback, errorCallback) {
 	exec(successCallback, errorCallback, "HeartBeat", "take", args);
 };
 
+heartbeat.checkCameraAuthorization = function (success, error) {
+    exec(success, error, 'HeartBeat', 'checkCameraAuthorization');
+};
+
 heartbeat.getModel = function (success, error) {
     exec(success, error, 'HeartBeat', 'getModel');
 };
