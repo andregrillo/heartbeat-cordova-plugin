@@ -23,26 +23,30 @@ int failedFrames;
     self.session.sessionPreset = AVCaptureSessionPresetLow;
     failedFrames = 0;
 
-    // Get the back-camera to capture the Video
-    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTripleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
-
-//    AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera,AVCaptureDeviceTypeBuiltInTripleCamera, AVCaptureDeviceTypeBuiltInDualCamera,AVCaptureDeviceTypeBuiltInUltraWideCamera,AVCaptureDeviceTypeBuiltInTelephotoCamera]
-//                                          mediaType:AVMediaTypeVideo
-//                                           position:AVCaptureDevicePositionBack];
-//    NSArray *devices = [captureDeviceDiscoverySession devices];
-//    //NSArray *devices = [AVCaptureDevice devices];
-//    AVCaptureDevice *captureDevice;
-//    for (AVCaptureDevice *device in devices)
-//    {
-//        if ([device hasMediaType:AVMediaTypeVideo])
-//        {
-//            if (device.position == AVCaptureDevicePositionBack)
-//            {
-//                captureDevice = device;
-//                break;
-//            }
-//        }
-//    }
+//    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTripleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
+    
+    AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera,
+                                        AVCaptureDeviceTypeBuiltInTelephotoCamera,
+                                        AVCaptureDeviceTypeBuiltInDualCamera
+//                                        ,AVCaptureDeviceTypeBuiltInTripleCamera
+                                        ]
+                                          mediaType:AVMediaTypeVideo
+                                           position:AVCaptureDevicePositionBack];
+    NSArray *captureDevices = [captureDeviceDiscoverySession devices];
+    
+    AVCaptureDevice *captureDevice;
+    for (AVCaptureDevice *device in captureDevices)
+    {
+        if ([device hasMediaType:AVMediaTypeVideo])
+        {
+            if (device.position == AVCaptureDevicePositionBack)
+            {
+                self.deviceName = device.localizedName;
+                captureDevice = device;
+                break;
+            }
+        }
+    }
     
     // Add the device to capture the Video Input to the session
     NSError *error;

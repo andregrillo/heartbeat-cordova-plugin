@@ -12,6 +12,7 @@
 @property (nonatomic, weak) id<CDVHeartBeatDetectionDelegate> delegate;
 @property (nonatomic, assign) int seconds;
 @property (nonatomic, assign) int fps;
+@property (nonatomic, strong) NSString *deviceName;
 @property (nonatomic, strong) NSMutableArray *returnArray;
 @property (nonatomic, strong) NSMutableArray *dataPointsHue;
 @property (nonatomic, assign) BOOL heartBeatError;
