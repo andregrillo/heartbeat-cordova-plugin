@@ -327,15 +327,16 @@ static int count=0;
 }
 
 - (int)getRednessR:(int)r G:(int)g B:(int)b {
-    if (r > 150) {
-        if ((r - g >= 60) && (r - b >= 60)) {
-            if ((g - b < 60) && (b - g < 60)) {
-                int redness = r - (g + b)/2;
-                return redness;
-            }
-        }
-    }
-    return -1;
+    return r - (g + b)/2;
+//    if (r > 150) {
+//        if ((r - g >= 60) && (r - b >= 60)) {
+//            if ((g - b < 60) && (b - g < 60)) {
+//                int redness = r - (g + b)/2;
+//                return redness;
+//            }
+//        }
+//    }
+//    return -1;
 }
 
 void RGBtoHSV( float r, float g, float b, float *h, float *s, float *v ) {
