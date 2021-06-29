@@ -22,6 +22,7 @@ int failedFrames;
     self.session = [[AVCaptureSession alloc] init];
     self.session.sessionPreset = AVCaptureSessionPresetLow;
     failedFrames = 0;
+    self.rednessError = [NSMutableString stringWithString:@""];
 
 //    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTripleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
     
@@ -267,7 +268,8 @@ static int count=0;
 //    UIColor *color = [UIColor colorWithRed:r green:g blue:b alpha:1.0];
 //    NSLog(@">>>R:%f, G:%f, B:%f", r*255, g*255, b*255);
     int redness = [self getRednessR:r*255 G:g*255 B:b*255];
-    NSLog(@"Redness & count: %d, %i", redness, count);
+    NSLog(@"Redness & count: %d, %i // ", redness, count);
+    [_rednessError appendString:[NSString stringWithFormat:@"Redness & count: %d, %i //", redness, count]];
     
     if(redness < 40){
         failedFrames +=1;

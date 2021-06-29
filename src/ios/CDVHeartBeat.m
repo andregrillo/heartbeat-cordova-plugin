@@ -43,7 +43,8 @@
         
         __weak CDVHeartBeat* weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] message:heartBeatDetection.deviceName preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] message:heartBeatDetection.rednessError preferredStyle:UIAlertControllerStyleAlert];
+//        message:heartBeatDetection.deviceName preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 //[weakSelf sendNoPermissionResult:command.callbackId];
             }]];
