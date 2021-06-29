@@ -24,7 +24,11 @@ int failedFrames;
     failedFrames = 0;
 
     // Get the back-camera to capture the Video
-    NSArray *devices = [AVCaptureDevice devices];
+    AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera,AVCaptureDeviceTypeBuiltInTripleCamera, AVCaptureDeviceTypeBuiltInDualCamera,AVCaptureDeviceTypeBuiltInUltraWideCamera,AVCaptureDeviceTypeBuiltInTelephotoCamera]
+                                          mediaType:AVMediaTypeVideo
+                                           position:AVCaptureDevicePositionBack];
+    NSArray *devices = [captureDeviceDiscoverySession devices];
+    //NSArray *devices = [AVCaptureDevice devices];
     AVCaptureDevice *captureDevice;
     for (AVCaptureDevice *device in devices)
     {
