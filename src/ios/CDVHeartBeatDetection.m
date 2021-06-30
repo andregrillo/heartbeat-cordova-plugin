@@ -22,7 +22,6 @@ int failedFrames;
     self.session = [[AVCaptureSession alloc] init];
     self.session.sessionPreset = AVCaptureSessionPresetLow;
     failedFrames = 0;
-    self.rednessError = [NSMutableString stringWithString:@""];
 
 //    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTripleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
     
@@ -42,7 +41,6 @@ int failedFrames;
         {
             if (device.position == AVCaptureDevicePositionBack)
             {
-                self.deviceName = device.localizedName;
                 captureDevice = device;
                 break;
             }
@@ -269,11 +267,10 @@ static int count=0;
 //    NSLog(@">>>R:%f, G:%f, B:%f", r*255, g*255, b*255);
     int redness = [self getRednessR:r*255 G:g*255 B:b*255];
     NSLog(@"Redness & count: %d, %i // ", redness, count);
-    [_rednessError appendString:[NSString stringWithFormat:@"Redness & count: %d, %i //", redness, count]];
     
     if(redness < 40){
         failedFrames +=1;
-        if (failedFrames > 5) {
+        if (failedFrames > 20) {
             [self stopDetection: true];
                 return;
         }
@@ -327,16 +324,15 @@ static int count=0;
 }
 
 - (int)getRednessR:(int)r G:(int)g B:(int)b {
-    return r - (g + b)/2;
-//    if (r > 150) {
-//        if ((r - g >= 60) && (r - b >= 60)) {
-//            if ((g - b < 60) && (b - g < 60)) {
-//                int redness = r - (g + b)/2;
-//                return redness;
-//            }
-//        }
-//    }
-//    return -1;
+    if (r > 150) {
+        if ((r - g >= 60) && (r - b >= 60)) {
+            if ((g - b < 60) && (b - g < 60)) {
+                int redness = r - (g + b)/2;
+                return redness;
+            }
+        }
+    }
+    return -1;
 }
 
 void RGBtoHSV( float r, float g, float b, float *h, float *s, float *v ) {
