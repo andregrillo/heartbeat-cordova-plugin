@@ -25,11 +25,7 @@ int failedFrames;
 
 //    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInTripleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
     
-    AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera,
-                                        AVCaptureDeviceTypeBuiltInTelephotoCamera,
-                                        AVCaptureDeviceTypeBuiltInDualCamera
-//                                        ,AVCaptureDeviceTypeBuiltInTripleCamera
-                                        ]
+    AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
                                           mediaType:AVMediaTypeVideo
                                            position:AVCaptureDevicePositionBack];
     NSArray *captureDevices = [captureDeviceDiscoverySession devices];
