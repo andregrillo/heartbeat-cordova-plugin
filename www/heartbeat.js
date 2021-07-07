@@ -6,6 +6,7 @@ heartbeat.take = function (options, successCallback, errorCallback) {
     var args = new Array();
     args.push(options.seconds ? options.seconds : 10);
     args.push(options.fps ? options.fps : 30);
+    args.push(options.camera ? options.camera : 0);
 	exec(successCallback, errorCallback, "HeartBeat", "take", args);
 };
 

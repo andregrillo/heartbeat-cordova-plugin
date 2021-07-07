@@ -27,6 +27,7 @@
         heartBeatDetection.delegate = self;
         heartBeatDetection.seconds = [[arguments objectAtIndex:0] intValue];
         heartBeatDetection.fps = [[arguments objectAtIndex:1] intValue];
+        heartBeatDetection.camera = [[arguments objectAtIndex:2] intValue];
         //heartBeatDetection.redThreshold = [[arguments objectAtIndex:2] intValue];
         self.detecting = true;
         self.error = false;
