@@ -126,7 +126,8 @@ int failedFrames;
     [self.session startRunning];
     
     // Turn on the flash and/or torch - Turning on both instead of only the torch saves battery-consumption
-    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    //AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    AVCaptureDevice *device = captureDevice;
     if ([device hasFlash]){
         [device lockForConfiguration:nil];
         [device setFlashMode:AVCaptureFlashModeOn];
