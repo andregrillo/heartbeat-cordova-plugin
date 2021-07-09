@@ -346,9 +346,9 @@ static int count=0;
 }
 
 - (int)getRednessR:(int)r G:(int)g B:(int)b {
-    if (r > 150) {
+    if (r > 140) {
         if ((r - g >= 60) && (r - b >= 60)) {
-            if ((g - b < 60) && (b - g < 60)) {
+            if ((g - b < 100) && (b - g < 60)) {
                 int redness = r - (g + b)/2;
                 return redness;
             }
