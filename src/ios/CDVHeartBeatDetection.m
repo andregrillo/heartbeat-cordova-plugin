@@ -263,7 +263,7 @@ static int count=0;
     
     int value = decodeYUV420SPtoRedAvg(buf, width, height);
 
-    float pixels20Percent = height * width * 0.2;
+    //float pixels20Percent = height * width * 0.2;
     
     for(int y=0; y < height; y+=heightScaleFactor) {
         for(int x=0; x < width*4; x+=(4*widthScaleFactor)) {
@@ -271,14 +271,14 @@ static int count=0;
             g+=buf[x+1];
             r+=buf[x+2];
 
-            int redness = [self getRednessR:r*255 G:g*255 B:b*255];
-            if(redness < 40){
-                pixels20Percent = pixels20Percent - 1;
-                if (pixels20Percent < 0) {
-                    [self stopDetection: true];
-                        return;
-                }
-            }
+            //int redness = [self getRednessR:r*255 G:g*255 B:b*255];
+            //if(redness < 40){
+            //    pixels20Percent = pixels20Percent - 1;
+            //    if (pixels20Percent < 0) {
+            //        [self stopDetection: true];
+            //            return;
+            //    }
+            //}
         }
         buf+=bprow;
     }
