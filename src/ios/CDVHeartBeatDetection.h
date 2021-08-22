@@ -16,6 +16,7 @@
 @property (nonatomic, strong) NSMutableArray *returnArray;
 @property (nonatomic, strong) NSMutableArray *dataPointsHue;
 @property (nonatomic, assign) BOOL heartBeatError;
+@property (nonatomic, assign) BOOL cameraDetectionFailed;
 //@property (nonatomic, assign) int redThreshold;
 
 - (void)startDetection;

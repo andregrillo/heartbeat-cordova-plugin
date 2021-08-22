@@ -1,4 +1,4 @@
-#import "CDVHeartBeatDetection.h"
+ƒ#import "CDVHeartBeatDetection.h"
 #import <AVFoundation/AVFoundation.h>
 
 @interface CDVHeartBeatDetection() <AVCaptureVideoDataOutputSampleBufferDelegate>
@@ -18,6 +18,7 @@ int failedFrames;
 - (void)startDetection
 {
     self.returnArray = [[NSMutableArray alloc] init];
+    self.cameraDetectionFailed = false;
     self.dataPointsHue = [[NSMutableArray alloc] init];
     self.session = [[AVCaptureSession alloc] init];
     self.session.sessionPreset = AVCaptureSessionPresetLow;
@@ -87,64 +88,79 @@ int failedFrames;
     for (AVCaptureDeviceFormat *format in captureDevice.formats)
     {
         NSArray *ranges = format.videoSupportedFrameRateRanges;
-        AVFrameRateRange *frameRates = ranges[0];
-        
-        if (frameRates.maxFrameRate == self.fps && (!currentFormat || (CMVideoFormatDescriptionGetDimensions(format.formatDescription).width < CMVideoFormatDescriptionGetDimensions(currentFormat.formatDescription).width && CMVideoFormatDescriptionGetDimensions(format.formatDescription).height < CMVideoFormatDescriptionGetDimensions(currentFormat.formatDescription).height)))
-        {
-            currentFormat = format;
+        @try {
+           AVFrameRateRange *frameRates = ranges[0]; 
+        }
+        @catch (NSRangeEception * e) {
+           self.cameraDetectionFailed = true;
+           self.heartBeatError = true;
+        }
+        @finally {
+           //something that you want to do wether the exception is thrown or not.
+            NSLog(@"AVFrameRateRange Failed? %d",self.cameraDetectionFailed);
+        }
+
+        if (self.cameraDetectionFailed == false){
+            if (frameRates.maxFrameRate == self.fps && (!currentFormat || (CMVideoFormatDescriptionGetDimensions(format.formatDescription).width < CMVideoFormatDescriptionGetDimensions(currentFormat.formatDescription).width && CMVideoFormatDescriptionGetDimensions(format.formatDescription).height < CMVideoFormatDescriptionGetDimensions(currentFormat.formatDescription).height)))
+            {
+                currentFormat = format;
+            }
         }
     }
-    
-    // Configure the camera settings
-    [captureDevice lockForConfiguration:nil];
-    /* Flash/Torch can't be turned on before the camera is running.
-     * captureDevice.torchMode=AVCaptureTorchModeOn;
-     */
 
-    // Assign the format that is set in the previous step.
-    captureDevice.activeFormat = currentFormat;
+    if (self.cameraDetectionFailed == false){
     
-    // The fixed framerate is needed to calculate the time running based on frames.
-    captureDevice.activeVideoMinFrameDuration = CMTimeMake(1, self.fps);
-    captureDevice.activeVideoMaxFrameDuration = CMTimeMake(1, self.fps);
-    [captureDevice unlockForConfiguration];
-    
-    // Set the output video that is needed to calculate the heartrate.
-    AVCaptureVideoDataOutput* videoOutput = [[AVCaptureVideoDataOutput alloc] init];
-    
-    // Create a queue of frames that are captured.
-    dispatch_queue_t captureQueue=dispatch_queue_create("captureQueue", NULL);
-    
-    // Configure the output settings.
-    [videoOutput setSampleBufferDelegate:self queue:captureQueue];
-    videoOutput.videoSettings = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], (id)kCVPixelBufferPixelFormatTypeKey,
-                                 nil];
-    videoOutput.alwaysDiscardsLateVideoFrames = NO;
-    [self.session addOutput:videoOutput];
-    
-    // Start the camera
-    [self.session startRunning];
-    
-    // Turn on the flash and/or torch - Turning on both instead of only the torch saves battery-consumption
-    //AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    AVCaptureDevice *device = captureDevice;
-    if ([device hasFlash]){
-        [device lockForConfiguration:nil];
-        [device setFlashMode:AVCaptureFlashModeOn];
-        [device unlockForConfiguration];
-    }
+        // Configure the camera settings
+        [captureDevice lockForConfiguration:nil];
+        /* Flash/Torch can't be turned on before the camera is running.
+         * captureDevice.torchMode=AVCaptureTorchModeOn;
+         */
 
-    if ([device hasTorch]){
-        [device lockForConfiguration:nil];
-        [device setTorchMode:AVCaptureTorchModeOn];
-        [device unlockForConfiguration];
-    }
+        // Assign the format that is set in the previous step.
+        captureDevice.activeFormat = currentFormat;
+        
+        // The fixed framerate is needed to calculate the time running based on frames.
+        captureDevice.activeVideoMinFrameDuration = CMTimeMake(1, self.fps);
+        captureDevice.activeVideoMaxFrameDuration = CMTimeMake(1, self.fps);
+        [captureDevice unlockForConfiguration];
+        
+        // Set the output video that is needed to calculate the heartrate.
+        AVCaptureVideoDataOutput* videoOutput = [[AVCaptureVideoDataOutput alloc] init];
+        
+        // Create a queue of frames that are captured.
+        dispatch_queue_t captureQueue=dispatch_queue_create("captureQueue", NULL);
+        
+        // Configure the output settings.
+        [videoOutput setSampleBufferDelegate:self queue:captureQueue];
+        videoOutput.videoSettings = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], (id)kCVPixelBufferPixelFormatTypeKey,
+                                     nil];
+        videoOutput.alwaysDiscardsLateVideoFrames = NO;
+        [self.session addOutput:videoOutput];
+        
+        // Start the camera
+        [self.session startRunning];
+        
+        // Turn on the flash and/or torch - Turning on both instead of only the torch saves battery-consumption
+        //AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+        AVCaptureDevice *device = captureDevice;
+        if ([device hasFlash]){
+            [device lockForConfiguration:nil];
+            [device setFlashMode:AVCaptureFlashModeOn];
+            [device unlockForConfiguration];
+        }
 
-    if (self.delegate)
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.delegate heartRateStart];
-        });
+        if ([device hasTorch]){
+            [device lockForConfiguration:nil];
+            [device setTorchMode:AVCaptureTorchModeOn];
+            [device unlockForConfiguration];
+        }
+
+        if (self.delegate)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.delegate heartRateStart];
+            });
+        }
     }
 }
 

@@ -82,6 +82,12 @@
                 [self.commandDelegate sendPluginResult:result callbackId:callbackId];
             }
             
+        } else if (heartBeatDetection.cameraDetectionFailed){
+            CDVPluginResult* result = [CDVPluginResult
+                                           resultWithStatus:(CDVCommandStatus_OK)
+                                           messageAsString:@"Camera Detection Failed"];
+                
+                [self.commandDelegate sendPluginResult:result callbackId:callbackId];
         } else {
             CDVPluginResult* resulterror = [CDVPluginResult
                                             resultWithStatus:CDVCommandStatus_ERROR
