@@ -1,4 +1,4 @@
-ƒ#import "CDVHeartBeatDetection.h"
+#import "CDVHeartBeatDetection.h"
 #import <AVFoundation/AVFoundation.h>
 
 @interface CDVHeartBeatDetection() <AVCaptureVideoDataOutputSampleBufferDelegate>
@@ -88,10 +88,11 @@ int failedFrames;
     for (AVCaptureDeviceFormat *format in captureDevice.formats)
     {
         NSArray *ranges = format.videoSupportedFrameRateRanges;
+        AVFrameRateRange *frameRates;
         @try {
-           AVFrameRateRange *frameRates = ranges[0]; 
+           frameRates = ranges[0];
         }
-        @catch (NSRangeEception * e) {
+        @catch (NSException * e) {
            self.cameraDetectionFailed = true;
            self.heartBeatError = true;
         }
