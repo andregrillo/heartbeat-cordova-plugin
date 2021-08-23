@@ -18,7 +18,7 @@ int failedFrames;
 - (void)startDetection
 {
     self.returnArray = [[NSMutableArray alloc] init];
-    self.cameraDetectionFailed = false;
+    self.crashPrevented = false;
     self.dataPointsHue = [[NSMutableArray alloc] init];
     self.session = [[AVCaptureSession alloc] init];
     self.session.sessionPreset = AVCaptureSessionPresetLow;
@@ -90,18 +90,18 @@ int failedFrames;
         NSArray *ranges = format.videoSupportedFrameRateRanges;
         AVFrameRateRange *frameRates;
         @try {
-           frameRates = ranges[0];
+           frameRates = ranges[0]; 
         }
         @catch (NSException * e) {
-           self.cameraDetectionFailed = true;
+           self.crashPrevented = true;
            self.heartBeatError = true;
         }
         @finally {
            //something that you want to do wether the exception is thrown or not.
-            NSLog(@"AVFrameRateRange Failed? %d",self.cameraDetectionFailed);
+            NSLog(@"AVFrameRateRange Failed? %d",self.crashPrevented);
         }
 
-        if (self.cameraDetectionFailed == false){
+        if (self.crashPrevented == false){
             if (frameRates.maxFrameRate == self.fps && (!currentFormat || (CMVideoFormatDescriptionGetDimensions(format.formatDescription).width < CMVideoFormatDescriptionGetDimensions(currentFormat.formatDescription).width && CMVideoFormatDescriptionGetDimensions(format.formatDescription).height < CMVideoFormatDescriptionGetDimensions(currentFormat.formatDescription).height)))
             {
                 currentFormat = format;
@@ -109,7 +109,7 @@ int failedFrames;
         }
     }
 
-    if (self.cameraDetectionFailed == false){
+    if (self.crashPrevented == false){
     
         // Configure the camera settings
         [captureDevice lockForConfiguration:nil];
@@ -349,13 +349,16 @@ static int count=0;
             
             NSMutableArray *bandpassFilteredItems = (NSMutableArray*) butterworthBandpassFilter(self.dataPointsHue);
             NSMutableArray *smoothedBandpassItems = (NSMutableArray*) medianSmoothing(bandpassFilteredItems);
-            int peak = medianPeak(smoothedBandpassItems);
-            int heartRate = 60 * self.fps / peak;
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.delegate heartRateUpdate:heartRate atTime:displaySeconds bfi:bandpassFilteredItems sbi:smoothedBandpassItems hue:self.dataPointsHue];
-            });
-        
+            int peak = [self medianPeak:smoothedBandpassItems];
+            if (self.crashPrevented) {
+                [self stopDetection:true];
+            } else {
+                int heartRate = 60 * self.fps / peak;
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.delegate heartRateUpdate:heartRate atTime:displaySeconds bfi:bandpassFilteredItems sbi:smoothedBandpassItems hue:self.dataPointsHue];
+                });
+            }
         }
     }
     
@@ -446,11 +449,10 @@ NSArray * butterworthBandpassFilter(NSArray *inputData)
         
         [outputData addObject:@(yv[8])];
     }
-    
     return outputData;
 }
 
-int medianPeak(NSArray *inputData)
+- (int)medianPeak:(NSArray *)inputData
 {
     NSMutableArray *peaks = [[NSMutableArray alloc] init];
     int count = 4;
@@ -470,12 +472,18 @@ int medianPeak(NSArray *inputData)
             count = 3;
         }
     }
-    [peaks setObject:@([peaks[0] integerValue] + count + 3) atIndexedSubscript: 0];
-    [peaks sortUsingComparator:^(NSNumber *a, NSNumber *b){
-        return [a compare:b];
-    }];
-    int medianPeak = (int)[peaks[peaks.count * 2 / 3] integerValue];
-    return medianPeak;
+    
+    if (peaks.count > 0) {
+        [peaks setObject:@([peaks[0] integerValue] + count + 3) atIndexedSubscript: 0];
+        [peaks sortUsingComparator:^(NSNumber *a, NSNumber *b){
+            return [a compare:b];
+        }];
+        int medianPeak = (int)[peaks[peaks.count * 2 / 3] integerValue];
+        return medianPeak;
+    } else {
+        self.crashPrevented = true;
+        return 0;
+    }
 }
 
 NSArray *medianSmoothing(NSArray *inputData)
