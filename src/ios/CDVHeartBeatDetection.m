@@ -482,6 +482,7 @@ NSArray * butterworthBandpassFilter(NSArray *inputData)
         return medianPeak;
     } else {
         self.crashPrevented = true;
+        self.heartBeatError = true;
         return 0;
     }
 }
