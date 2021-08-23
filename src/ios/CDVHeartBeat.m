@@ -82,10 +82,10 @@
                 [self.commandDelegate sendPluginResult:result callbackId:callbackId];
             }
             
-        } else if (heartBeatDetection.cameraDetectionFailed){
+        } else if (heartBeatDetection.crashPrevented == true){
             CDVPluginResult* result = [CDVPluginResult
                                            resultWithStatus:(CDVCommandStatus_OK)
-                                           messageAsString:@"Camera Detection Failed"];
+                                           messageAsString:@"Crash Prevented"];
                 
                 [self.commandDelegate sendPluginResult:result callbackId:callbackId];
         } else {
