@@ -473,17 +473,20 @@ NSArray * butterworthBandpassFilter(NSArray *inputData)
         }
     }
     
-    if (peaks.count > 0) {
+    @try {
         [peaks setObject:@([peaks[0] integerValue] + count + 3) atIndexedSubscript: 0];
         [peaks sortUsingComparator:^(NSNumber *a, NSNumber *b){
             return [a compare:b];
         }];
         int medianPeak = (int)[peaks[peaks.count * 2 / 3] integerValue];
         return medianPeak;
-    } else {
-        self.crashPrevented = true;
-        self.heartBeatError = true;
-        return 0;
+    }
+    @catch (NSException * e) {
+       self.crashPrevented = true;
+       self.heartBeatError = true;
+       return 0;
+    }
+    @finally {
     }
 }
 
