@@ -84,7 +84,7 @@
             
         } else if (heartBeatDetection.crashPrevented == true){
             CDVPluginResult* result = [CDVPluginResult
-                                           resultWithStatus:(CDVCommandStatus_OK)
+                                           resultWithStatus:(CDVCommandStatus_ERROR)
                                            messageAsString:@"Crash Prevented"];
                 
                 [self.commandDelegate sendPluginResult:result callbackId:callbackId];
